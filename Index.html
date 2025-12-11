@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Allan-Server MS</title>
+  <style>
+    body { font-family: monospace; background: #fff; color: #000; text-align: center; padding-top: 50px; }
+    #msg { margin-top: 20px; font-size: 1.5em; color: #333; }
+    input { width: 300px; padding: 10px; font-size: 1em; }
+    button { padding: 10px; font-size: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Allan-Server MS</h1>
+  <input type="text" id="inputMsg" placeholder="Digite sua mensagem aqui">
+  <button onclick="sendMsg()">Enviar</button>
+  <div id="msg"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // Recebe mensagens do servidor (via comando ms ou site)
+    socket.on('novaMensagem', (msg) => {
+      const msgDiv = document.getElementById('msg');
+      msgDiv.innerText = msg;
+    });
+
+    async function sendMsg() {
+      const msg = document.getElementById('inputMsg').value;
+      if(msg.trim() === "") return;
+      document.getElementById('msg').innerText = msg;
+
+      await fetch('http://localhost:3000/ms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mensagem: msg })
+      });
+    }
+  </script>
+</body>
+</html>
